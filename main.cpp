@@ -9,7 +9,7 @@
 
 using namespace std;
 
-int imgNum = 10;
+int imgNum = 5;
 
 int main(int argc, char *argv[])
 {
@@ -52,35 +52,31 @@ int main(int argc, char *argv[])
 				{
 					
 					string filename;
-					//QRect rect(QPoint(j - 16, i - 16), QPoint(j + 16, i + 16));
-					filename = "\\imageData\\1\\";
+					QRect rect(QPoint(j - 16, i - 16), QPoint(j + 16, i + 16));
+					filename = "imageData/1/";
 					filename += to_string(m);
 					filename += "_";
 					filename += to_string(i);
 					filename += "_";
 					filename += to_string(j);
 					filename += ".PNG";
-					/*
 					QImage copy = imgTest.copy(rect);
 					copy.save(QString::fromStdString(filename));
-					*/
 					outputFile << filename << " 1" << endl;
 				}
 				else
 				{
 					string filename;
-					//QRect rect(QPoint(j - 16, i - 16), QPoint(j + 16, i + 16));
-					filename = "\\imageData\\0\\";
+					QRect rect(QPoint(j - 16, i - 16), QPoint(j + 16, i + 16));
+					filename = "imageData/0/";
 					filename += to_string(m);
 					filename += "_";
 					filename += to_string(i);
 					filename += "_";
 					filename += to_string(j);
 					filename += ".PNG";
-					/*
 					QImage copy = imgTest.copy(rect);
 					copy.save(QString::fromStdString(filename));
-					*/
 					outputFile << filename << " 0" <<endl;
 				}
 			}
