@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 		string groundTruth, test;
 		groundTruth += "./image/groundTruth";
 		groundTruth += to_string(m);
-		groundTruth += ".PNG";
+		groundTruth += ".bmp";
 		test += "./image/test";
 		test += to_string(m);
 		test += ".PNG";
