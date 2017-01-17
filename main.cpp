@@ -5,11 +5,10 @@
 #include <QtGui/QImage>
 #include <direct.h>
 
-
-
 using namespace std;
 
-int imgNum = 5;
+int startImgNum = 1;
+int imgNum = 51;
 
 int main(int argc, char *argv[])
 {
@@ -28,7 +27,7 @@ int main(int argc, char *argv[])
 	_chdir("../");
 	ofstream outputFile("train.txt");
 
-	for (int m = 1; m <= imgNum; m++)
+	for (int m = startImgNum; m <= imgNum; m++)
 	{
 
 		//Read img
