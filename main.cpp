@@ -8,14 +8,15 @@
 using namespace std;
 
 int startImgNum = 1;
-int imgNum = 51;
+int imgNum =  22;
+int maskHeight = 47;
 
 int main(int argc, char *argv[])
 {
-	//QCoreApplication a(argc, argv);
 	string folder, True, False;
 	
-	folder += "./imageData";
+	folder += "./imageData-";
+	folder += to_string(maskHeight);
 	True = folder;
 	True += "/1/";
 	False = folder;
@@ -25,7 +26,7 @@ int main(int argc, char *argv[])
 	_mkdir("0");
 	_mkdir("1");
 	_chdir("../");
-	ofstream outputFile("train.txt");
+	//ofstream outputFile("train.txt");
 
 	for (int m = startImgNum; m <= imgNum; m++)
 	{
@@ -37,47 +38,35 @@ int main(int argc, char *argv[])
 		groundTruth += ".bmp";
 		test += "./image/test";
 		test += to_string(m);
-		test += ".PNG";
+		test += ".bmp";
 		
 		QImage imgGroundTruth(QString::fromStdString(groundTruth));
 		QImage imgTest(QString::fromStdString(test));
 
-		for (int i = 16; i < imgTest.height() - 17; i++)
+		for (int i = 0; i < imgTest.height() ; i++)
 		{
-			for (int j = 16; j < imgTest.width() - 17; j++)
+			for (int j = 0; j < imgTest.width(); j++)
 			{
 				QColor clrCurrent(imgGroundTruth.pixel(j, i));
+				string filename;
+				QRect rect(QPoint(j - maskHeight/2, i - maskHeight/2), QPoint(j + maskHeight/2, i + maskHeight/2));
 				if (clrCurrent.red() == 255)
 				{
-					
-					string filename;
-					QRect rect(QPoint(j - 16, i - 16), QPoint(j + 16, i + 16));
 					filename = "imageData/1/";
-					filename += to_string(m);
-					filename += "_";
-					filename += to_string(i);
-					filename += "_";
-					filename += to_string(j);
-					filename += ".PNG";
-					QImage copy = imgTest.copy(rect);
-					copy.save(QString::fromStdString(filename));
-					outputFile << filename << " 1" << endl;
 				}
 				else
 				{
-					string filename;
-					QRect rect(QPoint(j - 16, i - 16), QPoint(j + 16, i + 16));
 					filename = "imageData/0/";
-					filename += to_string(m);
-					filename += "_";
-					filename += to_string(i);
-					filename += "_";
-					filename += to_string(j);
-					filename += ".PNG";
-					QImage copy = imgTest.copy(rect);
-					copy.save(QString::fromStdString(filename));
-					outputFile << filename << " 0" <<endl;
 				}
+				filename += to_string(m);
+				filename += "_";
+				filename += to_string(i);
+				filename += "_";
+				filename += to_string(j);
+				filename += ".PNG";
+				//outputFile << filename << " 0" <<endl;
+				QImage copy = imgTest.copy(rect);
+				copy.save(QString::fromStdString(filename));
 			}
 		}
 		
