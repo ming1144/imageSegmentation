@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 
 #include <QtCore/QCoreApplication>
 #include <QtGui/QImage>
@@ -42,12 +43,31 @@ int main(int argc, char *argv[])
 	mkdir("1", 0777);
 	chdir("../");
 
+	string testImageFolder = "female/";
+	string testfile_filename = testImageFolder;
+	testfile_filename += "testfile.txt";
+	ifstream input(testfile_filename);
+	vector<string> testfileList;
+	string temp;
+	while (getline(input, temp))
+	{
+		int end = temp.size();
+		temp[end--] = '\0';
+		temp[end--] = '\0';
+		temp[end--] = '\0';
+		temp[end--] = '\0';
+		temp[end--] = '\0';
+		temp[end--] = '\0';
+		testfileList.push_back(temp);
+	}
+
+
 	for (int m = startImgNum; m <= imgNum; m++)
 	{
 
 		//Read img
 		string groundTruth, test;
-		groundTruth = "./testImage/groundTruth";
+		groundTruth = testImageFolder;
 		groundTruth += to_string(m);
 		groundTruth += ".png";
 		test = "./testImage/test";
