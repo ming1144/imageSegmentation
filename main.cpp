@@ -56,23 +56,20 @@ int main(int argc, char *argv[])
 		temp[end--] = '\0';
 		temp[end--] = '\0';
 		temp[end--] = '\0';
-		temp[end--] = '\0';
-		temp[end--] = '\0';
 		testfileList.push_back(temp);
 	}
 
 
 	for (int m = startImgNum; m <= imgNum; m++)
 	{
-
 		//Read img
 		string groundTruth, test;
 		groundTruth = testImageFolder;
-		groundTruth += to_string(m);
-		groundTruth += ".png";
-		test = "./testImage/test";
-		test += to_string(m);
-		test += ".png";
+		groundTruth += testfileList[m];
+		groundTruth += ".bmp";
+		test = testImageFolder;
+		test += testfileList[m];
+		test += "(R).bmp";
 		
 		QImage imgGroundTruth(QString::fromStdString(groundTruth));
 		QImage imgTest(QString::fromStdString(test));
