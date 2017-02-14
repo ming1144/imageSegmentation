@@ -1,15 +1,30 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+
 #include <QtCore/QCoreApplication>
 #include <QtGui/QImage>
+
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+
+//MSVC
+#ifdef _WIN32
 #include <direct.h>
+#define mkdir(x,y) _mkdir(x)
+#define chdir(x) _chdir(x)
+#else
+#include <sys/stat.h>
+#include <unistd.h>
+#endif
 
 using namespace std;
 
-int startImgNum = 1;
-int imgNum =  22;
-int maskHeight = 47;
+int startImgNum = 24;
+int imgNum =  25;
+int maskHeight = 33;
+bool padding = false;
 
 int main(int argc, char *argv[])
 {
@@ -21,42 +36,46 @@ int main(int argc, char *argv[])
 	True += "/1/";
 	False = folder;
 	False += "/0/";
-	_mkdir(folder.c_str());
-	_chdir(folder.c_str());
-	_mkdir("0");
-	_mkdir("1");
-	_chdir("../");
-	//ofstream outputFile("train.txt");
+	mkdir(folder.c_str(), 0777);
+	chdir(folder.c_str());
+	mkdir("0", 0777);
+	mkdir("1", 0777);
+	chdir("../");
 
 	for (int m = startImgNum; m <= imgNum; m++)
 	{
 
 		//Read img
 		string groundTruth, test;
-		groundTruth += "./image/groundTruth";
+		groundTruth = "./testImage/groundTruth";
 		groundTruth += to_string(m);
-		groundTruth += ".bmp";
-		test += "./image/test";
+		groundTruth += ".png";
+		test = "./testImage/test";
 		test += to_string(m);
-		test += ".bmp";
+		test += ".png";
 		
 		QImage imgGroundTruth(QString::fromStdString(groundTruth));
 		QImage imgTest(QString::fromStdString(test));
 
-		for (int i = 0; i < imgTest.height() ; i++)
+		int start = maskHeight/2;
+		if (padding)
 		{
-			for (int j = 0; j < imgTest.width(); j++)
+			start = 0;
+		}
+		for (int i = start; i < imgTest.height() - start; i++)
+		{
+			for (int j = start; j < imgTest.width() - start; j++)
 			{
 				QColor clrCurrent(imgGroundTruth.pixel(j, i));
 				string filename;
 				QRect rect(QPoint(j - maskHeight/2, i - maskHeight/2), QPoint(j + maskHeight/2, i + maskHeight/2));
-				if (clrCurrent.red() == 255)
+				if (clrCurrent.red() == 255 && clrCurrent.green() == 0 && clrCurrent.blue() == 0)
 				{
-					filename = "imageData/1/";
+					filename = True;
 				}
 				else
 				{
-					filename = "imageData/0/";
+					filename = False;
 				}
 				filename += to_string(m);
 				filename += "_";
@@ -64,7 +83,6 @@ int main(int argc, char *argv[])
 				filename += "_";
 				filename += to_string(j);
 				filename += ".PNG";
-				//outputFile << filename << " 0" <<endl;
 				QImage copy = imgTest.copy(rect);
 				copy.save(QString::fromStdString(filename));
 			}
