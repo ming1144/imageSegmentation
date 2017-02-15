@@ -22,8 +22,6 @@
 
 using namespace std;
 
-int startImgNum = 24;
-int imgNum =  25;
 int maskHeight = 33;
 bool padding = false;
 
@@ -43,33 +41,40 @@ int main(int argc, char *argv[])
 	mkdir("1", 0777);
 	chdir("../");
 
+	
+	
 	string testImageFolder = "female/";
+
+
 	string testfile_filename = testImageFolder;
 	testfile_filename += "testfile.txt";
 	ifstream input(testfile_filename);
 	vector<string> testfileList;
-	string temp;
-	while (getline(input, temp))
+	string temp1;
+	while (getline(input, temp1))
 	{
-		int end = temp.size();
-		temp[end--] = '\0';
-		temp[end--] = '\0';
-		temp[end--] = '\0';
-		temp[end--] = '\0';
-		testfileList.push_back(temp);
+		string temp2;
+		getline(input, temp2);
+		int end = temp2.size();
+		temp2[end--] = '\0';
+		temp2[end--] = '\0';
+		temp2[end--] = '\0';
+		temp2[end--] = '\0';
+		temp2[end--] = '\0';
+		testfileList.push_back(temp2);
 	}
 
 
-	for (int m = startImgNum; m <= imgNum; m++)
+	for (int m = 0; m < testfileList.size(); m++)
 	{
 		//Read img
 		string groundTruth, test;
 		groundTruth = testImageFolder;
-		groundTruth += testfileList[m];
-		groundTruth += ".bmp";
+		groundTruth += testfileList[m].c_str();
+		groundTruth += "(R).bmp";
 		test = testImageFolder;
-		test += testfileList[m];
-		test += "(R).bmp";
+		test += testfileList[m].c_str();
+		test += ".bmp";
 		
 		QImage imgGroundTruth(QString::fromStdString(groundTruth));
 		QImage imgTest(QString::fromStdString(test));
@@ -94,7 +99,7 @@ int main(int argc, char *argv[])
 				{
 					filename = False;
 				}
-				filename += to_string(m);
+				filename += to_string(m+1);
 				filename += "_";
 				filename += to_string(i);
 				filename += "_";
