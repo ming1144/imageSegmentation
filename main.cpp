@@ -21,7 +21,7 @@
 
 using namespace std;
 
-int startImgNum = 24;
+int startImgNum = 1;
 int imgNum =  25;
 int maskHeight = 33;
 bool padding = false;
