@@ -21,8 +21,8 @@
 
 using namespace std;
 
-int startImgNum = 1;
-int imgNum =  25;
+int startImgNum = 2;
+int imgNum =  24;
 int maskHeight = 33;
 bool padding = false;
 
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 {
 	string folder, True, False;
 	
-	folder += "./imageData-";
+	folder += "./imageDataCT-";
 	folder += to_string(maskHeight);
 	True = folder;
 	True += "/1/";
@@ -47,11 +47,15 @@ int main(int argc, char *argv[])
 
 		//Read img
 		string groundTruth, test;
-		groundTruth = "./testImage/groundTruth";
+		groundTruth = "./CTmerge/groundTruth";
 		groundTruth += to_string(m);
 		groundTruth += ".png";
-		test = "./testImage/test";
+		test = "./CTmerge/merge";
+		test += to_string(m-1);
+		test += "_";
 		test += to_string(m);
+		test += "_";
+		test += to_string(m+1);
 		test += ".png";
 		
 		QImage imgGroundTruth(QString::fromStdString(groundTruth));
