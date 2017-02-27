@@ -43,24 +43,18 @@ int main(int argc, char *argv[])
 
 	
 	
-	string testImageFolder = "female/";
+	string testImageFolder = "trainingData/male/";
 
 
 	string testfile_filename = testImageFolder;
-	testfile_filename += "testfile.txt";
+	testfile_filename += "origin/testfile.txt";
 	ifstream input(testfile_filename);
 	vector<string> testfileList;
 	string temp1;
 	while (getline(input, temp1))
 	{
-		string temp2;
-		getline(input, temp2);
-		int end = temp2.size();
-		temp2[end--] = '\0';
-		temp2[end--] = '\0';
-		temp2[end--] = '\0';
-		temp2[end--] = '\0';
-		temp2[end--] = '\0';
+		int temp = temp1.find_last_of('.');
+		string temp2 = temp1.substr(0, temp);
 		testfileList.push_back(temp2);
 	}
 
@@ -70,9 +64,11 @@ int main(int argc, char *argv[])
 		//Read img
 		string groundTruth, test;
 		groundTruth = testImageFolder;
+		groundTruth += "groundTruth/";
 		groundTruth += testfileList[m].c_str();
 		groundTruth += "(R).bmp";
 		test = testImageFolder;
+		test += "origin/";
 		test += testfileList[m].c_str();
 		test += ".bmp";
 		
@@ -99,7 +95,7 @@ int main(int argc, char *argv[])
 				{
 					filename = False;
 				}
-				filename += to_string(m+1);
+				filename += testfileList[m].c_str();
 				filename += "_";
 				filename += to_string(i);
 				filename += "_";
