@@ -3,12 +3,9 @@
 #include <string>
 #include <vector>
 
-#include <QtCore/QCoreApplication>
 #include <QtGui/QImage>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
+#include <omp.h>
 
 //MSVC
 #ifdef _WIN32
@@ -28,7 +25,8 @@ bool padding = true;
 int main(int argc, char *argv[])
 {
 	string folder, True, False;
-	
+	int i, j, m;
+
 	folder += "./imageData-";
 	folder += to_string(maskHeight);
 	True = folder;
@@ -55,8 +53,8 @@ int main(int argc, char *argv[])
 		testfileList.push_back(temp2);
 	}
 
-
-	for (int m = 0; m < testfileList.size(); m++)
+#pragma omp parallel for
+	for (m = 0; m < testfileList.size(); m++)
 	{
 		//Read img
 		string groundTruth, test;
@@ -86,9 +84,9 @@ int main(int argc, char *argv[])
 		p_imgTestGray = imgTestGray.bits();
 
 
-		for (int i = start; i < imgTest.height() - start; i++, p_imgGroundTruth += imgGroundTruth.bytesPerLine(), p_imgTestGray += imgTestGray.bytesPerLine())
+		for (i = start; i < imgTest.height() - start; i++, p_imgGroundTruth += imgGroundTruth.bytesPerLine(), p_imgTestGray += imgTestGray.bytesPerLine())
 		{
-			for (int j = start; j < imgTest.width() - start; j++)
+			for (j = start; j < imgTest.width() - start; j++)
 			{
 				bool groundTruthIsRed;
 				if (p_imgGroundTruth[j * 4 + 2] == 255)
@@ -168,8 +166,10 @@ int main(int argc, char *argv[])
 				filename += to_string(j);
 				filename += ".PNG";
 				ROI.save(QString::fromStdString(filename));
+				delete temp_p_imgTestGray;
 			}
 		}
+		delete p_imgGroundTruth, p_imgTestGray, p_ROI;
 	}
 
 	return 0;
