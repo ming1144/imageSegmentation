@@ -7,6 +7,8 @@
 
 #include <omp.h>
 
+#include <dirent.h>
+
 //MSVC
 #ifdef _WIN32
 #include <direct.h>
@@ -17,18 +19,26 @@
 #include <unistd.h>
 #endif
 
-using namespace std;
+using std::string;
+using std::vector;
+
 
 int maskHeight = 33;
 bool padding = true;
 
 int main(int argc, char *argv[])
 {
+	struct dirent *drnt;
 	string folder, True, False;
 	int i, j, m;
 
+	string groundTruth, test;
+
+	uchar* p_imgGroundTruth, *p_imgTestGray, *p_ROI, *temp_p_imgTestGray;
+	int x_start, x_end, y_start, y_end;
+
 	folder += "./imageData-";
-	folder += to_string(maskHeight);
+	folder += std::to_string(maskHeight);
 	True = folder;
 	True += "/1/";
 	False = folder;
@@ -41,23 +51,40 @@ int main(int argc, char *argv[])
 
 	string testImageFolder = "trainingData/all/";
 
-	string testfile_filename = testImageFolder;
+	/*string testfile_filename = testImageFolder;
 	testfile_filename += "origin/testfile.txt";
-	ifstream input(testfile_filename);
+	std::ifstream input(testfile_filename);
 	vector<string> testfileList;
-	string temp1;
-	while (getline(input, temp1))
+	string temp1, temp2;
+	int lastNode;
+	while (std::getline(input, temp1))
 	{
-		int temp = temp1.find_last_of('.');
-		string temp2 = temp1.substr(0, temp);
+		lastNode = temp1.find_last_of('.');
+		temp2 = temp1.substr(0, lastNode);
 		testfileList.push_back(temp2);
-	}
+	}*/
 
+	DIR *dr;
+	int lastNode;
+	string temp1, temp2;
+	dr = opendir((testImageFolder+"origin").c_str());
+	vector<string> testfileList;
+	while (drnt = readdir(dr))
+	{
+		if (drnt->d_type == DT_REG)
+		{
+			temp1 = drnt->d_name;
+			std::cout << temp1 << std::endl;
+			lastNode = temp1.find_last_of('.');
+			temp2 = temp1.substr(0, lastNode);
+			testfileList.push_back(temp2);
+
+		}
+	}
 #pragma omp parallel for
 	for (m = 0; m < testfileList.size(); m++)
 	{
 		//Read img
-		string groundTruth, test;
 		groundTruth = testImageFolder;
 		groundTruth += "groundTruth/";
 		groundTruth += testfileList[m].c_str();
@@ -72,8 +99,6 @@ int main(int argc, char *argv[])
 		QImage imgTestGray(imgTest.width(), imgTest.height(), QImage::Format_Grayscale8);
 		imgTestGray = imgTest.convertToFormat(QImage::Format_Grayscale8);
 
-		uchar* p_imgGroundTruth, *p_imgTestGray, *p_ROI;
-
 		int start = maskHeight / 2;
 		if (padding)
 		{
@@ -82,7 +107,6 @@ int main(int argc, char *argv[])
 
 		p_imgGroundTruth = imgGroundTruth.bits();
 		p_imgTestGray = imgTestGray.bits();
-
 
 		for (i = start; i < imgTest.height() - start; i++, p_imgGroundTruth += imgGroundTruth.bytesPerLine(), p_imgTestGray += imgTestGray.bytesPerLine())
 		{
@@ -100,7 +124,6 @@ int main(int argc, char *argv[])
 
 				QImage ROI(maskHeight, maskHeight,QImage::Format_Grayscale8);
 				ROI.fill(QColor(0, 0, 0));
-				uchar* temp_p_imgTestGray;
 				int x_start, x_end, y_start, y_end;
 
 				if (i < maskHeight / 2)
@@ -161,15 +184,13 @@ int main(int argc, char *argv[])
 
 				filename += testfileList[m].c_str();
 				filename += "_";
-				filename += to_string(i);
+				filename += std::to_string(i);
 				filename += "_";
-				filename += to_string(j);
+				filename += std::to_string(j);
 				filename += ".PNG";
 				ROI.save(QString::fromStdString(filename));
-				delete temp_p_imgTestGray;
 			}
 		}
-		delete p_imgGroundTruth, p_imgTestGray, p_ROI;
 	}
 
 	return 0;
