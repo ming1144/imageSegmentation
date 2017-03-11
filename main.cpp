@@ -2,12 +2,8 @@
 #include <fstream>
 #include <string>
 
-#include <QtCore/QCoreApplication>
 #include <QtGui/QImage>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
 
 //MSVC
 #ifdef _WIN32
